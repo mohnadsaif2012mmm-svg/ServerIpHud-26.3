@@ -13,7 +13,7 @@ import net.minecraft.resources.Identifier;
 public class ServerIpHud implements ClientModInitializer {
     private static final int MARGIN = 3;
     private static final int PADDING = 2;
-    private static final long DISPLAY_TIME_MS = 2000L;
+    private static final long DISPLAY_TIME_MS = 1000L;
     private static final float TEXT_SCALE = 0.75f;
 
     private static String lastServerIp = "";
