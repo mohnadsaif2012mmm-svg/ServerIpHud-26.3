@@ -11,9 +11,10 @@ import net.minecraft.client.multiplayer.ServerData;
 import net.minecraft.resources.Identifier;
 
 public class ServerIpHud implements ClientModInitializer {
-    private static final int MARGIN = 4;
-    private static final int PADDING = 3;
-    private static final long DISPLAY_TIME_MS = 5000L;
+    private static final int MARGIN = 3;
+    private static final int PADDING = 2;
+    private static final long DISPLAY_TIME_MS = 2000L;
+    private static final float TEXT_SCALE = 0.75f;
 
     private static String lastServerIp = "";
     private static long shownAt = 0L;
@@ -45,18 +46,20 @@ public class ServerIpHud implements ClientModInitializer {
         String currentIp = server.ip;
         long now = System.currentTimeMillis();
 
-        // Show the address when connecting to a different server.
         if (!currentIp.equals(lastServerIp)) {
             lastServerIp = currentIp;
             shownAt = now;
         }
 
-        // Hide the address after five seconds.
         if (now - shownAt >= DISPLAY_TIME_MS) {
             return;
         }
 
         String text = "Server IP: " + currentIp;
+
+        graphics.pose().pushMatrix();
+        graphics.pose().scale(TEXT_SCALE, TEXT_SCALE);
+
         int width = mc.font.width(text);
         int height = mc.font.lineHeight;
 
@@ -76,5 +79,7 @@ public class ServerIpHud implements ClientModInitializer {
                 0xFFFFFFFF,
                 true
         );
+
+        graphics.pose().popMatrix();
     }
 }
