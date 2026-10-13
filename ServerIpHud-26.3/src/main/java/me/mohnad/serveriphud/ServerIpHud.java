@@ -26,7 +26,7 @@ public class ServerIpHud implements ClientModInitializer {
         Minecraft mc = Minecraft.getInstance();
 
         // Only show in multiplayer, and respect F1 (hide HUD)
-        if (mc.player == null || mc.level == null || mc.options.hideGui) {
+     if (mc.player == null || mc.level == null) {
             return;
         }
 
