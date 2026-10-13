@@ -1,3 +1,4 @@
+
 package me.mohnad.serveriphud;
 
 import net.fabricmc.api.ClientModInitializer;
@@ -12,6 +13,10 @@ import net.minecraft.resources.Identifier;
 public class ServerIpHud implements ClientModInitializer {
     private static final int MARGIN = 4;
     private static final int PADDING = 3;
+    private static final long DISPLAY_TIME_MS = 5000L;
+
+    private static String lastServerIp = "";
+    private static long shownAt = 0L;
 
     @Override
     public void onInitializeClient() {
@@ -22,11 +27,13 @@ public class ServerIpHud implements ClientModInitializer {
         );
     }
 
-    private static void extract(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
+    private static void extract(
+            GuiGraphicsExtractor graphics,
+            DeltaTracker deltaTracker
+    ) {
         Minecraft mc = Minecraft.getInstance();
 
-        // Only show in multiplayer, and respect F1 (hide HUD)
-     if (mc.player == null || mc.level == null) {
+        if (mc.player == null || mc.level == null) {
             return;
         }
 
@@ -35,11 +42,39 @@ public class ServerIpHud implements ClientModInitializer {
             return;
         }
 
-        String text = server.ip;
+        String currentIp = server.ip;
+        long now = System.currentTimeMillis();
+
+        // Show the address when connecting to a different server.
+        if (!currentIp.equals(lastServerIp)) {
+            lastServerIp = currentIp;
+            shownAt = now;
+        }
+
+        // Hide the address after five seconds.
+        if (now - shownAt >= DISPLAY_TIME_MS) {
+            return;
+        }
+
+        String text = "Server IP: " + currentIp;
         int width = mc.font.width(text);
         int height = mc.font.lineHeight;
 
-        graphics.fill(MARGIN, MARGIN, MARGIN + width + PADDING * 2, MARGIN + height + PADDING * 2, 0x88000000);
-        graphics.text(mc.font, text, MARGIN + PADDING, MARGIN + PADDING, 0xFFFFFFFF, true);
+        graphics.fill(
+                MARGIN,
+                MARGIN,
+                MARGIN + width + PADDING * 2,
+                MARGIN + height + PADDING * 2,
+                0x88000000
+        );
+
+        graphics.text(
+                mc.font,
+                text,
+                MARGIN + PADDING,
+                MARGIN + PADDING,
+                0xFFFFFFFF,
+                true
+        );
     }
 }
